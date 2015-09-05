@@ -31,7 +31,42 @@
           <h1>
 <a id="clj-cloud-gen" class="anchor" href="#clj-cloud-gen" aria-hidden="true"><span class="octicon octicon-link"></span></a>clj-cloud-gen</h1>
 
-<p>Amazon cloudformation in clojure</p>
+<p>This is beta software - I will be changing things</p>
+
+<p>A clojure library and application to create and deploy Amazon Web Services cloudformation templates.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-clojure"><pre>
+(<span class="pl-k">def</span> <span class="pl-e">options</span>
+          {<span class="pl-c1">:description</span> <span class="pl-s"><span class="pl-pds">"</span>LTD VPC<span class="pl-pds">"</span></span>
+           <span class="pl-c1">:format</span>  <span class="pl-s"><span class="pl-pds">"</span>2010-09-09<span class="pl-pds">"</span></span>
+           <span class="pl-c1">:parameters</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-s"><span class="pl-pds">"</span>ltd-vpc<span class="pl-pds">"</span></span>
+                        <span class="pl-c1">:key-name</span> <span class="pl-s"><span class="pl-pds">"</span>ltd_prd<span class="pl-pds">"</span></span>
+                        <span class="pl-c1">:ssh-from</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>
+                        <span class="pl-c1">:instance-type</span> <span class="pl-s"><span class="pl-pds">"</span>t2.micro<span class="pl-pds">"</span></span>}
+           <span class="pl-c1">:mappings</span> {<span class="pl-c1">:instance-arch</span>  {<span class="pl-c1">:c3.large</span> {<span class="pl-c1">:arch</span> <span class="pl-s"><span class="pl-pds">"</span>HVM64<span class="pl-pds">"</span></span>}}
+                      <span class="pl-c1">:region</span>  {<span class="pl-c1">:us-east-1</span> {<span class="pl-c1">:pv64</span> <span class="pl-s"><span class="pl-pds">"</span>ami-50842d38<span class="pl-pds">"</span></span>
+                                            <span class="pl-c1">:hvm64</span> <span class="pl-s"><span class="pl-pds">"</span>ami-08842d60<span class="pl-pds">"</span></span>
+                                            <span class="pl-c1">:hvmg2</span> <span class="pl-s"><span class="pl-pds">"</span>ami-3a329952<span class="pl-pds">"</span></span>}}
+                      <span class="pl-c1">:image-id</span> {<span class="pl-c1">:default</span> <span class="pl-s"><span class="pl-pds">"</span>ami-116d857a<span class="pl-pds">"</span></span>
+                                 <span class="pl-c1">:nat</span> <span class="pl-s"><span class="pl-pds">"</span>ami-303b1458<span class="pl-pds">"</span></span>}
+                      <span class="pl-c1">:subnet-config</span> {<span class="pl-c1">:vpc</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.0.0/16<span class="pl-pds">"</span></span>}
+                                      <span class="pl-c1">:public</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.0.0/24<span class="pl-pds">"</span></span>
+                                               <span class="pl-c1">:nat</span> {<span class="pl-c1">:ip</span> {<span class="pl-c1">:private</span>  <span class="pl-s"><span class="pl-pds">"</span>10.0.0.2<span class="pl-pds">"</span></span>}}}
+                                      <span class="pl-c1">:private</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.1.0/24<span class="pl-pds">"</span></span>
+                                                <span class="pl-c1">:default</span> {<span class="pl-c1">:ip</span> {<span class="pl-c1">:private</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.1.3<span class="pl-pds">"</span></span>}}}}}})
+
+(<span class="pl-k">def</span> <span class="pl-e">json-template</span> (<span class="pl-en">assemble-cloudformation</span> parameteric-cfgs static-cfgs test-cfgs))                                                </pre></div>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright © 2015 FIXME</p>
+
+<p>Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.</p>
         </section>
 
         <aside id="sidebar">
