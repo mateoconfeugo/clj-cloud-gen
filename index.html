@@ -1,80 +1,164 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Clj-cloud-gen by mateoconfeugo</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Clj-cloud-gen</h1>
-        <p>Amazaon cloudformation in clojure</p>
+    <section class="page-header">
+      <h1 class="project-name">Clj-cloud-gen</h1>
+      <h2 class="project-tagline">Amazon Web Services (AWS) cloudformation in clojure</h2>
+      <a href="https://github.com/mateoconfeugo/clj-cloud-gen" class="btn">View on GitHub</a>
+      <a href="https://github.com/mateoconfeugo/clj-cloud-gen/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mateoconfeugo/clj-cloud-gen/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/mateoconfeugo/clj-cloud-gen">View the Project on GitHub <small>mateoconfeugo/clj-cloud-gen</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/mateoconfeugo/clj-cloud-gen/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/mateoconfeugo/clj-cloud-gen/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/mateoconfeugo/clj-cloud-gen">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="clj-cloud-gen" class="anchor" href="#clj-cloud-gen" aria-hidden="true"><span class="octicon octicon-link"></span></a>clj-cloud-gen</h1>
 
-<p>This is beta software - I will be changing things</p>
+<p>A clojure library and application to create and deploy Amazon Web Services cloudformation templates.<br>
+The json declaritve cloudformation is verbose and obfucates complicated layouts.  By using function graphs
+and clojure's ablity to succiently decribe a data schema the specification of the infrastructure is much 
+readable, maintable, adaptable</p>
 
-<p>A clojure library and application to create and deploy Amazon Web Services cloudformation templates.</p>
+<p>It is import to set certian environment variables </p>
+
+<p>in a .lein-env or profiles.clj file</p>
+
+<div class="highlight highlight-source-clojure"><pre>{
+:cf-template-bucket-uri <span class="pl-s"><span class="pl-pds">"</span>https://s3.amazonaws.com/cf-templates-replace-me-us-east-1/test-ci-devops<span class="pl-pds">"</span></span>
+:cf-stack-name  <span class="pl-s"><span class="pl-pds">"</span>devops-ci<span class="pl-pds">"</span></span>
+:cf-bucket-name <span class="pl-s"><span class="pl-pds">"</span>cf-templates-replace-me-us-east-1<span class="pl-pds">"</span></span>
+:cf-object-name  <span class="pl-s"><span class="pl-pds">"</span>test-ci-devops<span class="pl-pds">"</span></span>
+:cf-template-path <span class="pl-s"><span class="pl-pds">"</span>cloudformation/test_result.json<span class="pl-pds">"</span></span>
+}
+</pre></div>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <div class="highlight highlight-source-clojure"><pre>
-(<span class="pl-k">def</span> <span class="pl-e">options</span>
-          {<span class="pl-c1">:description</span> <span class="pl-s"><span class="pl-pds">"</span>LTD VPC<span class="pl-pds">"</span></span>
-           <span class="pl-c1">:format</span>  <span class="pl-s"><span class="pl-pds">"</span>2010-09-09<span class="pl-pds">"</span></span>
-           <span class="pl-c1">:parameters</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-s"><span class="pl-pds">"</span>ltd-vpc<span class="pl-pds">"</span></span>
-                        <span class="pl-c1">:key-name</span> <span class="pl-s"><span class="pl-pds">"</span>ltd_prd<span class="pl-pds">"</span></span>
-                        <span class="pl-c1">:ssh-from</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>
-                        <span class="pl-c1">:instance-type</span> <span class="pl-s"><span class="pl-pds">"</span>t2.micro<span class="pl-pds">"</span></span>}
-           <span class="pl-c1">:mappings</span> {<span class="pl-c1">:instance-arch</span>  {<span class="pl-c1">:c3.large</span> {<span class="pl-c1">:arch</span> <span class="pl-s"><span class="pl-pds">"</span>HVM64<span class="pl-pds">"</span></span>}}
-                      <span class="pl-c1">:region</span>  {<span class="pl-c1">:us-east-1</span> {<span class="pl-c1">:pv64</span> <span class="pl-s"><span class="pl-pds">"</span>ami-50842d38<span class="pl-pds">"</span></span>
-                                            <span class="pl-c1">:hvm64</span> <span class="pl-s"><span class="pl-pds">"</span>ami-08842d60<span class="pl-pds">"</span></span>
-                                            <span class="pl-c1">:hvmg2</span> <span class="pl-s"><span class="pl-pds">"</span>ami-3a329952<span class="pl-pds">"</span></span>}}
-                      <span class="pl-c1">:image-id</span> {<span class="pl-c1">:default</span> <span class="pl-s"><span class="pl-pds">"</span>ami-116d857a<span class="pl-pds">"</span></span>
-                                 <span class="pl-c1">:nat</span> <span class="pl-s"><span class="pl-pds">"</span>ami-303b1458<span class="pl-pds">"</span></span>}
-                      <span class="pl-c1">:subnet-config</span> {<span class="pl-c1">:vpc</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.0.0/16<span class="pl-pds">"</span></span>}
-                                      <span class="pl-c1">:public</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.0.0/24<span class="pl-pds">"</span></span>
-                                               <span class="pl-c1">:nat</span> {<span class="pl-c1">:ip</span> {<span class="pl-c1">:private</span>  <span class="pl-s"><span class="pl-pds">"</span>10.0.0.2<span class="pl-pds">"</span></span>}}}
-                                      <span class="pl-c1">:private</span> {<span class="pl-c1">:cidr</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.1.0/24<span class="pl-pds">"</span></span>
-                                                <span class="pl-c1">:default</span> {<span class="pl-c1">:ip</span> {<span class="pl-c1">:private</span> <span class="pl-s"><span class="pl-pds">"</span>10.0.1.3<span class="pl-pds">"</span></span>}}}}}})
+(<span class="pl-k">ns</span> <span class="pl-e">clj-cloud-gen.cloud-specification</span>
+  (<span class="pl-c1">:require</span> [plumbing.core <span class="pl-c1">:as</span> p <span class="pl-c1">:refer</span> [fnk]]
+            [plumbing.graph <span class="pl-c1">:as</span> graph]))
+
+(<span class="pl-k">def</span> <span class="pl-e">static-cfgs</span>
+  {
+   <span class="pl-c1">:gateway</span> {<span class="pl-c1">:default-gateway</span> {}}
+
+   <span class="pl-c1">:internet</span> {<span class="pl-c1">:default-connection</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span>
+                                   <span class="pl-c1">:internet-gateway-id</span> <span class="pl-c1">:default-gateway</span>}}
+
+   <span class="pl-c1">:route-table</span> {<span class="pl-c1">:public-table</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span>}
+                 <span class="pl-c1">:private-table</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span>}}
+
+   <span class="pl-c1">:route</span> {<span class="pl-c1">:public-route</span> {<span class="pl-c1">:depends-on</span> <span class="pl-c1">:default-connection</span>
+                          <span class="pl-c1">:route-table-id</span> <span class="pl-c1">:public-table</span>
+                          <span class="pl-c1">:destination-cidr-block</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>
+                          <span class="pl-c1">:gateway-id</span> <span class="pl-c1">:default-gateway</span>}
+           <span class="pl-c1">:private-route</span> {<span class="pl-c1">:route-table-id</span> <span class="pl-c1">:private-table</span>
+                           <span class="pl-c1">:destination-cidr-block</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>
+                           <span class="pl-c1">:instance-id</span> <span class="pl-c1">:nat-node</span>}}
+
+   <span class="pl-c1">:subnet-route-table</span> {<span class="pl-c1">:private-subnet-route</span> {<span class="pl-c1">:subnet-id</span> <span class="pl-c1">:private-subnet</span>
+                                               <span class="pl-c1">:route-table-id</span> <span class="pl-c1">:private-table</span>}
+                        <span class="pl-c1">:public-subnet-route</span>  {<span class="pl-c1">:subnet-id</span> <span class="pl-c1">:public-subnet</span>
+                                               <span class="pl-c1">:route-table-id</span> <span class="pl-c1">:public-table</span>}}
+
+   <span class="pl-c1">:ip</span> {<span class="pl-c1">:nat-ip-address</span> {<span class="pl-c1">:depends-on</span> <span class="pl-c1">:default-connection</span>
+                         <span class="pl-c1">:domain</span> <span class="pl-s"><span class="pl-pds">"</span>vpc<span class="pl-pds">"</span></span>
+                         <span class="pl-c1">:instance-id</span> <span class="pl-c1">:nat-node</span>}}
+   })
+
+(<span class="pl-k">def</span> <span class="pl-e">parameteric-cfgs</span>
+  {<span class="pl-c1">:format</span>
+   (<span class="pl-en">p/fnk</span> [])
+
+   <span class="pl-c1">:vpc</span>
+   (<span class="pl-en">p/fnk</span> [mappings]
+          {<span class="pl-c1">:devops</span> {<span class="pl-c1">:cidr-block</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:subnet-config</span> <span class="pl-c1">:vpc</span> <span class="pl-c1">:cidr</span>)}})
+
+   <span class="pl-c1">:subnet</span>
+   (<span class="pl-en">p/fnk</span> [parameters mappings]
+          {<span class="pl-c1">:public-subnet</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span> <span class="pl-c1">:cidr-block</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:subnet-config</span> <span class="pl-c1">:public</span> <span class="pl-c1">:cidr</span>)}
+           <span class="pl-c1">:private-subnet</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span> <span class="pl-c1">:cidr-block</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:subnet-config</span> <span class="pl-c1">:private</span> <span class="pl-c1">:cidr</span>)}})
+
+   <span class="pl-c1">:security-group</span>
+   (<span class="pl-en">p/fnk</span> [parameters]
+          (<span class="pl-k">let</span> [{<span class="pl-c1">:keys</span> [ssh-from]} parameters]
+            {<span class="pl-c1">:web</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span> <span class="pl-c1">:group-description</span> <span class="pl-s"><span class="pl-pds">"</span>Enable  SSH access from anywhere<span class="pl-pds">"</span></span>
+                   <span class="pl-c1">:security-group-ingress</span> [{<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>22<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>22<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> ssh-from}
+                                            {<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>80<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>80<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}
+                                            {<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>443<span class="pl-pds">"</span></span>:to-port <span class="pl-s"><span class="pl-pds">"</span>443<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}]}
+             <span class="pl-c1">:nat</span>  {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span> <span class="pl-c1">:group-description</span> <span class="pl-s"><span class="pl-pds">"</span>NAT <span class="pl-pds">"</span></span>
+                    <span class="pl-c1">:security-group-ingress</span> [{<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>icmp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>-1<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>-1<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}
+                                             {<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>22<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>22<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> ssh-from}
+                                             {<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>80<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>80<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}
+                                             {<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>443<span class="pl-pds">"</span></span>:to-port <span class="pl-s"><span class="pl-pds">"</span>443<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}]}
+             <span class="pl-c1">:database</span> {<span class="pl-c1">:vpc-id</span> <span class="pl-c1">:devops</span> <span class="pl-c1">:group-description</span> <span class="pl-s"><span class="pl-pds">"</span>Pass all traffic<span class="pl-pds">"</span></span>
+                        <span class="pl-c1">:security-group-ingress</span> [{<span class="pl-c1">:ip-protocol</span> <span class="pl-s"><span class="pl-pds">"</span>tcp<span class="pl-pds">"</span></span> <span class="pl-c1">:from-port</span> <span class="pl-s"><span class="pl-pds">"</span>3306<span class="pl-pds">"</span></span> <span class="pl-c1">:to-port</span> <span class="pl-s"><span class="pl-pds">"</span>3306<span class="pl-pds">"</span></span> <span class="pl-c1">:cidr-ip</span> <span class="pl-s"><span class="pl-pds">"</span>0.0.0.0/0<span class="pl-pds">"</span></span>}]}
+             }))
+
+   <span class="pl-c1">:node</span>
+   (<span class="pl-en">p/fnk</span> [parameters subnet mappings security-group]
+          {<span class="pl-c1">:web-node</span>  {<span class="pl-c1">:key-name</span> (<span class="pl-en">-&gt;</span> parameters <span class="pl-c1">:key-name</span>)
+                       <span class="pl-c1">:instance-type</span> <span class="pl-s"><span class="pl-pds">"</span>c3.large<span class="pl-pds">"</span></span>
+                       <span class="pl-c1">:subnet-id</span> <span class="pl-c1">:private-subnet</span>
+                       <span class="pl-c1">:private-ip-address</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:subnet-config</span> <span class="pl-c1">:private</span> <span class="pl-c1">:default</span> <span class="pl-c1">:ip</span> <span class="pl-c1">:private</span>)
+                       <span class="pl-c1">:source-dest-check</span> <span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span>
+                       <span class="pl-c1">:image-id</span>  (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:image</span> <span class="pl-c1">:web-node</span> <span class="pl-c1">:ami</span>)
+                       <span class="pl-c1">:security-group-ids</span> [<span class="pl-c1">:web</span>]}
+           <span class="pl-c1">:nat-node</span> {<span class="pl-c1">:key-name</span> (<span class="pl-en">-&gt;</span> parameters <span class="pl-c1">:key-name</span>)
+                      <span class="pl-c1">:instance-type</span> (<span class="pl-en">-&gt;</span> parameters <span class="pl-c1">:instance-type</span>)
+                      <span class="pl-c1">:subnet-id</span> <span class="pl-c1">:public-subnet</span>
+                      <span class="pl-c1">:private-ip-address</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:subnet-config</span> <span class="pl-c1">:public</span> <span class="pl-c1">:nat</span> <span class="pl-c1">:ip</span> <span class="pl-c1">:private</span>)
+                      <span class="pl-c1">:source-dest-check</span> <span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span>
+                      <span class="pl-c1">:security-group-ids</span> [<span class="pl-c1">:nat</span>]
+                      <span class="pl-c1">:image-id</span>  (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:image</span> <span class="pl-c1">:nat-node</span> <span class="pl-c1">:ami</span>)}})
+
+   <span class="pl-c1">:volume</span>
+   (<span class="pl-en">p/fnk</span> [parameters mappings]
+          {<span class="pl-c1">:default-volume</span> {<span class="pl-c1">:size</span>  (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:image-id</span> <span class="pl-c1">:web-node</span> <span class="pl-c1">:volume</span> <span class="pl-c1">:size</span>)
+                            <span class="pl-c1">:depends-on</span> <span class="pl-c1">:web-node</span>
+                            <span class="pl-c1">:availability-zone</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:availability-zone</span>)}})
+
+   <span class="pl-c1">:volume-attachment</span>
+   (<span class="pl-en">p/fnk</span> [mappings]
+          {<span class="pl-c1">:instance-mount-point</span> {<span class="pl-c1">:instance-id</span> <span class="pl-c1">:web-node</span>
+                                  <span class="pl-c1">:volume-id</span> <span class="pl-c1">:default-volume</span>
+                                  <span class="pl-c1">:device</span> (<span class="pl-en">-&gt;</span> mappings <span class="pl-c1">:image</span> <span class="pl-c1">:web-node</span> <span class="pl-c1">:volume</span> <span class="pl-c1">:mount-point</span>)}})
+   <span class="pl-c1">:resources</span>
+   (<span class="pl-en">p/fnk</span> [vpc subnet internet gateway route-table route security-group node ip volume volume-attachment subnet-route-table <span class="pl-c1">:as</span> args]
+          args
+          )
+   }
+  )
 
 (<span class="pl-k">def</span> <span class="pl-e">json-template</span> (<span class="pl-en">assemble-cloudformation</span> parameteric-cfgs static-cfgs test-cfgs))                                                </pre></div>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>Copyright © 2015 FIXME</p>
+<p>Copyright © 2015 Matthew Burns All rights reserved.</p>
 
 <p>Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/mateoconfeugo">mateoconfeugo</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mateoconfeugo/clj-cloud-gen">Clj-cloud-gen</a> is maintained by <a href="https://github.com/mateoconfeugo">mateoconfeugo</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
