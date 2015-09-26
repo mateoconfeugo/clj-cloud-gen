@@ -2,8 +2,8 @@
   :description "AWS Cloudformation declarations of network infrastructure in clojure data structures and function graphs rather than in AWS JSON Cloudformation template language.  Also a command line program to create and update the cloud."
   :url "http://mateoconfeugo.github.io/clj-cloud-gen"
   :license {:name "Eclipse Public License" :url "http://www.eclipse.org/legal/epl-v10.html"}
-;;  :main clj-cloud-gen.core.main
-;;  :aot :all
+  ;;  :main clj-cloud-gen.core.main
+  ;;  :aot :all
   :dependencies [[org.clojure/clojure "1.7.0-RC1"] ;; LISP on the JVM
                  [clj-aws-ec2 "0.5.0"]
                  [org.clojure/tools.cli "0.3.1"]
@@ -22,6 +22,8 @@
                  [org.clojure/core.match "0.3.0-alpha4"] ;; An optimized pattern matching library
                  [prismatic/plumbing "0.3.3"] ;; function graphs
                  [org.clojure/clojure "1.6.0"]]
-    :profiles  {:dev {:plugins [[com.palletops/pallet-lein "0.8.0-alpha.1"]]}
-                :leiningen/reply {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.12"]]
-                                  :exclusions [commons-logging]}})
+  :plugins [[lein-marginalia "0.7.1"]
+            [lein-environ "1.0.0"]]
+  :profiles  {:dev {:plugins [[com.palletops/pallet-lein "0.8.0-alpha.1"]]}
+              :leiningen/reply {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.12"]]
+                                :exclusions [commons-logging]}})

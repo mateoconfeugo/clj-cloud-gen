@@ -1,17 +1,12 @@
 (ns clj-cloud-gen.cloudformation
-  (:require [cheshire.core :as json :refer [generate-string parse-string]]
+  ^{:author "Matthew Burns"
+    :description "Transform the results of invoking a function graph describing the infrastructure into AWS Cloudformation Template."}
+  (:require [cheshire.core :as json :refer [generate-string]]
             [clojure.algo.generic.functor :refer [fmap]]
             [clojure.string :as str]
             [clojure.walk :as walk]
             [plumbing.core :as p :refer [fnk]]
-            [plumbing.graph :as graph]
-            [taoensso.timbre :as log :refer (tracef debugf debug infof warnf errorf)]
-;;            [com.palletops.awaze.client-builder :refer :all]
-            [com.palletops.awaze.cloudformation :as cf :refer [create-stack create-stack-map]]
-            ))
-
-(def fix-ups {"NatIpAddress" "NATIPAddress"
-              "Devops" "DEVOPS"})
+            [plumbing.graph :as graph]))
 
 (def type->aws-resource {:vpc "VPC"
                          :subnet "Subnet"
@@ -66,21 +61,10 @@
   [resource]
   (if (resource-referenced resource) true false))
 
-(defn transform-reference-2
-  "Camel cases and fixes up names."
-  [resource-data resource-type]
-  (let [fixed-type (keyword->camel (key->key-id resource-type))
-        resource-name (get resource-data (key->key-id resource-type))
-        fixed-name (get fix-ups (keyword->camel resource-name) resource-name)
-        fixed-data (-> resource-data key->string)]
-    (assoc-in  fixed-data [fixed-type] {"Ref" fixed-name})))
-
 (defn transform-reference
   "Camel cases and fixes up names."
   [resource-data resource-type]
   (let [resource-name (get resource-data (key->key-id resource-type))]
-    ;; (assoc-in  resource-data [] {"Ref" resource-name})
-    ;;    {(key->key-id resource-type) {"Ref" resource-name}}
     {"Ref" (keyword->camel resource-name)}))
 
 (defn transform-properties-references
@@ -101,7 +85,9 @@
     (vector (keyword->camel name) args)))
 
 (defn- render-dispatch [{:keys [type] :as args}] type)
+
 (defmulti render-resource #'render-dispatch)
+
 (defmethod render-resource :default
   [{:keys [type properties name] :as args}]
   (let [r (resource name (format "AWS::EC2::%s" (get type->aws-resource type))  properties)]
@@ -132,16 +118,20 @@
   (let [r (resource name (format "AWS::EC2::%s" (get type->aws-resource type)) properties)]
     [(first r) (key->string (last r))]))
 
-(defn transform-resource [type name resource]
+(defn transform-resource
+  [type name resource]
    (render-resource {:name name :type type :properties resource}))
 
-(defn transform-type-resources [resources type]
+(defn transform-type-resources
+  [resources type]
   (map (fn [r] (transform-resource  type (first r) (last r))) (seq resources)))
 
-(defn transform-resources [resources]
+(defn transform-resources
+  [resources]
   (map (fn [r] (transform-type-resources (last r) (first r))) (seq resources)))
 
-(defn resource-item-list [resource]
+(defn resource-item-list
+  [resource]
   (zipmap (map #(-> % first) resource)  (map #(-> % last) resource)))
 
 (defn resources->map
@@ -164,9 +154,6 @@
   [specification it-layout settings]
   ((graph/eager-compile specification) (merge it-layout settings)))
 
-(def select-values
-  "Returns a vector containing only those entries in map whose val is in keys."
-  (comp vals select-keys))
 
 (defn ->tags [keys div tags]
   "Turns a list of tag definitions into an aws tag list.
@@ -199,14 +186,3 @@
               (= 0)
               (assert))
           (->tags [:key :value] 2 kvs)))))
-
-
-(comment
-(defn resource-cname
-  [resource-name stack-role & [{:keys [type resource-property identifier]}]]
-  (resource (str resource-name "CNAME") "AWS::Route53::RecordSet"
-            {:type (or type "A")
-             "TTL" "300"
-             :hosted-zone-name (str hosted-name ".")
-             :name (secure-domain stack-role {:identifier identifier :cname true})
-             :resource-records [(aws-fn :get-att resource-name  (or resource-property "PrivateIp"))]})))

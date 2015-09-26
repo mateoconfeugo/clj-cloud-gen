@@ -28,8 +28,6 @@
    :ip {:nat-ip-address {:depends-on :default-connection
                          :domain "vpc"
                          :instance-id :nat-node}}
-
-
    })
 
 (def parameteric-cfgs
@@ -60,16 +58,6 @@
              :database {:vpc-id :devops :group-description "Pass all traffic"
                         :security-group-ingress [{:ip-protocol "tcp" :from-port "3306" :to-port "3306" :cidr-ip "0.0.0.0/0"}]}
              }))
-
-   :network-acl (p/fnk []
-                       {:public {:vpc-id :devops
-                                 :cidr-block nil
-                                 :egress nil
-                                 :icmp nil
-                                 :network-acl nil
-                                 :port-range nil
-                                 :rule-action nil
-                                 :rule-number nil}})
 
    :node
    (p/fnk [parameters subnet mappings security-group]
