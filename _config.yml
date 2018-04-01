@@ -1,0 +1,8 @@
+title: Clj-cloud-gen
+description: Amazon Web Services (AWS) cloudformation in clojure
+google_analytics: UA-67852560-1
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
